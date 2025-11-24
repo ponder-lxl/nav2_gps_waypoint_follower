@@ -4,9 +4,9 @@ This is a modified version of the tutorial code found referenced in the [officia
 
 The code is modified to work with ROS2 Humble, applying the changes mentioned in this [GitHub Issues thread](https://github.com/ros-navigation/navigation2_tutorials/issues/77)
 
-## Running the code
+## Dependencies
 
-First, make sure all of the dependencies listed ine tutorial are installed:
+安装依赖
 
 `source /opt/ros/<ros2-distro>/setup.bash`
 
@@ -18,44 +18,30 @@ First, make sure all of the dependencies listed ine tutorial are installed:
 
 `sudo apt install ros-$ROS_DISTRO-tile-map`
 
-Next make the following change to the file found at `/opt/ros/humble/lib/python3.10/site-packages/nav2_simple_commander/robot_navigator.py`, per this [issue thread](https://github.com/cra-ros-pkg/robot_localization/issues/844):
 
-Existing code:
-```
-    def waitUntilNav2Active(self, navigator='bt_navigator', localizer='amcl'):
-        """Block until the full navigation system is up and running."""
-        self._waitForNodeToActivate(localizer)
-        if localizer == 'amcl':
-            self._waitForInitialPose()
-        self._waitForNodeToActivate(navigator)
-        self.info('Nav2 is ready for use!')
-        return
-```
-Replace with:
+## Waypoint Navigation Demo
 
-```
-    def waitUntilNav2Active(self, navigator='bt_navigator', localizer='amcl'):
-        """Block until the full navigation system is up and running."""
-        if localizer != "robot_localization":
-            self._waitForNodeToActivate(localizer)
-        if localizer == 'amcl':
-            self._waitForInitialPose()
-        self._waitForNodeToActivate(navigator)
-        self.info('Nav2 is ready for use!')
-        return
+### Rviz界面交互导航
+
+启动导航:
+
+```bash
+ros2 launch nav2_gps_waypoint_follower_demo gps_waypoint_follower.launch.py use_rviz:=True
 ```
 
-#### Waypoint Navigation Demo
+启动gps定位
 
-Per the tutorial, first run:
+```bash
+ros2 launch nav2_gps_waypoint_follower_demo dual_ekf_navsat.launch.py
+```
 
-`ros2 launch nav2_gps_waypoint_follower_demo gps_waypoint_follower.launch.py use_rviz:=True`
+### 记录GPS航点并跟随导航
 
-Then, on a separate terminal
+```bash
+ros2 run nav2_gps_waypoint_follower_demo gps_waypoint_logger </path/to/yaml/file.yaml>
+```
 
-`ros2 run nav2_gps_waypoint_follower_demo logged_waypoint_follower </path/to/yaml/file.yaml>`
-
-If the path is empty, the default waypoints found in `config/demo_waypoints.yaml` will be used
-
-
-https://www.ncnynl.com/ros2docs/cn/nav2/tutorials/docs/navigation2_with_gps.html
+跟随记录的GPS航点
+```bash
+ros2 run nav2_gps_waypoint_follower_demo logged_waypoint_follower </path/to/yaml/file.yaml>
+```
