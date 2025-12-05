@@ -45,3 +45,18 @@ ros2 run nav2_gps_waypoint_follower_demo gps_waypoint_logger </path/to/yaml/file
 ```bash
 ros2 run nav2_gps_waypoint_follower_demo logged_waypoint_follower </path/to/yaml/file.yaml>
 ```
+
+## 改进
+### 给定路径点集导航
+**原有代码**
+  - 机器人在导航过程中，当前目标点与下一目标点之间，机器人会有明显的停顿。原因在于机器人导航到当前目标点后，navigator要检测到到达当前目标点成功的状态后才会发送下一个目标点
+  - 只会跑一圈路径点
+
+**改进**
+  - 设置预瞄距离，在机器人与当前目标点的距离小于预瞄距离时，就发送下一个目标点，进而避免了机器人到达当前目标点时会停顿的现象
+  - 不限圈次的跑
+
+运行
+```bash
+ros2 run nav2_gps_waypoint_follower_demo lookhead_logged_waypoint_follower </path/to/yaml/file.yaml>
+```
